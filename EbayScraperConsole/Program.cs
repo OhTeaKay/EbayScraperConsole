@@ -31,22 +31,31 @@ namespace EbayScraperConsole
                 .Where(node => node.GetAttributeValue("id", "")
                 .Equals("ListViewInner")).ToList();
 
+
             var ProductListItems = ProductsHtml[0].Descendants("li")
                 .Where(node => node.GetAttributeValue("id", "")
                 .Contains("item")).ToList();
 
+            ProductsHtml.Sort(Regex.Match(
+                    ProductListItems.Descendants("li")
+                        .Where(node => node.GetAttributeValue("class", "")
+                            .Equals("lvprice prc")).FirstOrDefault().InnerText.Trim('\r', '\n', '\t', '?')
+                    , @"\d+.\d+") + " PLN"
+            );
+                
+            
             foreach (var ProductListItem in ProductListItems)
             {
                 // Get Id
                 Console.WriteLine(ProductListItem.GetAttributeValue("listingid",""));
 
-                //Get name
+                // Get name
                 Console.WriteLine(ProductListItem.Descendants("h3")
                     .Where(node => node.GetAttributeValue("class", "")
                     .Equals("lvtitle")).FirstOrDefault().InnerText.Trim('\r','\n','\t','?')
                     );
 
-                //Get price
+                // Get price
                 Console.WriteLine(
                     Regex.Match(
                     ProductListItem.Descendants("li")
