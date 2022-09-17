@@ -13,13 +13,18 @@ namespace EbayScraperConsole
     {
         static void Main(string[] args)
         {
-            GetHtmlAsync();
+            int NumberOfPages = 3;
+            for (int i = 1; i <= NumberOfPages; i++)
+            {
+                GetHtmlAsync(i);
+            }
+            
             Console.ReadLine();
         }
-        // asa
-        private static async void GetHtmlAsync()
+        
+        private static async void GetHtmlAsync(int pgn)
         {
-            var url = "https://www.ebay.pl/sch/i.html?_nkw=Playstation+5&_in_kw=1&_ex_kw=&_sacat=0&LH_Complete=1&_udlo=&_udhi=&_samilow=&_samihi=&_sadis=10&_fpos=&LH_SALE_CURRENCY=0&_sop=12&_dmd=1&_ipg=200&_fosrp=1";
+            var url = "https://www.ebay.pl/sch/i.html?_sacat=0&LH_Complete=1&_udlo=&_udhi=&_samilow=&_samihi=&_sadis=10&_fpos=&LH_SALE_CURRENCY=0&_sop=12&_dmd=1&_fosrp=1&_nkw=Playstation+5&_pgn=" + pgn + "&_skc=240&rt=nc";
 
             var httpClient = new HttpClient();
             var html = await httpClient.GetStringAsync(url);
@@ -36,13 +41,6 @@ namespace EbayScraperConsole
                 .Where(node => node.GetAttributeValue("id", "")
                 .Contains("item")).ToList();
 
-            ProductsHtml.Sort(Regex.Match(
-                    ProductListItems.Descendants("li")
-                        .Where(node => node.GetAttributeValue("class", "")
-                            .Equals("lvprice prc")).FirstOrDefault().InnerText.Trim('\r', '\n', '\t', '?')
-                    , @"\d+.\d+") + " PLN"
-            );
-                
             
             foreach (var ProductListItem in ProductListItems)
             {
@@ -76,11 +74,11 @@ namespace EbayScraperConsole
                     ProductListItem.Descendants("a").FirstOrDefault().GetAttributeValue("href", "").Trim('\r', '\n', '\t', '?')
                     );
 
-
                 Console.WriteLine();
             }
 
             Console.WriteLine(ProductListItems.Count());
+            Console.WriteLine("\n===========================  STRONA " + pgn + " =================================\n");
             Console.WriteLine();
         }
     }
