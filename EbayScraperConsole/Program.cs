@@ -9,22 +9,25 @@ using HtmlAgilityPack;
 
 namespace EbayScraperConsole
 {
-    internal class Program
+    class Program
     {
         static void Main(string[] args)
         {
-            int NumberOfPages = 3;
-            for (int i = 1; i <= NumberOfPages; i++)
+            string NameOfProduct = "Playstation 5";
+            int NumberOfPages = 5;
+
+
+            for (int index = 1; index <= NumberOfPages; index++)
             {
-                GetHtmlAsync(i);
+                GetHtmlAsync(index, NameOfProduct);
             }
             
             Console.ReadLine();
         }
         
-        private static async void GetHtmlAsync(int pgn)
+        private static async void GetHtmlAsync(int pgn, string nop)
         {
-            var url = "https://www.ebay.pl/sch/i.html?_sacat=0&LH_Complete=1&_udlo=&_udhi=&_samilow=&_samihi=&_sadis=10&_fpos=&LH_SALE_CURRENCY=0&_sop=12&_dmd=1&_fosrp=1&_nkw=Playstation+5&_pgn=" + pgn + "&_skc=240&rt=nc";
+            var url = "https://www.ebay.pl/sch/i.html?_sacat=0&LH_Complete=1&_udlo=&_udhi=&_samilow=&_samihi=&_sadis=10&_fpos=&LH_SALE_CURRENCY=0&_sop=12&_dmd=1&_fosrp=1&_nkw=" + nop + "&pgn=" + pgn + "&_skc=240&rt=nc";
 
             var httpClient = new HttpClient();
             var html = await httpClient.GetStringAsync(url);
@@ -77,8 +80,8 @@ namespace EbayScraperConsole
                 Console.WriteLine();
             }
 
-            Console.WriteLine(ProductListItems.Count());
-            Console.WriteLine("\n===========================  STRONA " + pgn + " =================================\n");
+            //Console.WriteLine(ProductListItems.Count());
+            //Console.WriteLine("\n=============================  STRONA [" + pgn + "] ===================================\n");
             Console.WriteLine();
         }
     }
